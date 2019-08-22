@@ -1,0 +1,52 @@
+---
+title: "ACST886_Assignment1_Q3"
+author: "Shaofei Shen"
+date: "2019/8/22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Q3
+#### (a)
+```{r}
+PMT<-function(i,n){
+  pv<-(1-(1/(1+i)^n))/i
+  return(1000*pv)
+}
+PMT(0.035,30)
+```
+
+#### (b)
+The interest rate should be lower. Since the present value of all cashflow with commssion (600000+18392.05=618392.05) is greater than the one wothout commission (600000). Keep the same annual payment and interest rate, we need to lower the interest rate to allow commission involved. As the fomular $PV=\sum_{n=1}^{30} \frac{PMT}{(1+i)^n}$. 
+
+#### (c)
+the present value of all future cashflow is 600000+18392.05=618392.05. Using the formula $PV=\sum_{n=1}^{30} \frac{PMT}{(1+i)^n}$, we need to find an interest rate that can make the present value is 618392.05, keep the annual payment same as before 32622.8. Using function "uniroot", we set our unknow variable as interest rate i to make the function is 0. we already known from (b) that the interest rate is lower, so our interest rate range should be within [0,3.5%]
+```{r}
+rate<-function(i){
+   PMT<-c(rep(32622.799,30))
+  ##generate the dicount factor for 30 yrs 
+  v<-1/(1+i)^(1:30)
+  PV<-sum(PMT*v)
+  return(PV-(600000+18392.05))
+}
+uniroot(rate,c(0,0.035))
+```
+we find out the new interst rate is 3.26%.
+
+#### (d)
+we are using the new interest rate 3.26%. The present value of loan amount is 600000. find out the new annual payment. 
+```{r}
+PV<-function(x){
+  ##generate the annual payment vetor for 30 yrs
+  PMT<-c(rep(x,30))
+  ##generate the dicount vector for 30 yrs 
+  v<-1/(1+0.0326)^(1:30)
+  PV<-sum(PMT*v)-600000
+  return(PV)
+}
+uniroot(PV,c(30000,50000))
+```
+The new annual payment is found out by using "uniroot", which is 31629.27. the new payment is 973.53 (32622.8-31649.27) less than before. 
